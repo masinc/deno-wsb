@@ -1,94 +1,68 @@
 /**
- * Windows Sandbox Configuration types and schemas
+ * Windows Sandbox Configuration types
  */
-
-import * as z from "zod";
 
 /**
- * Enable or Disable state schema
- * @internal
+ * Enable, Disable, or Default state
  */
-export const EnableStateSchema = z.enum(["Enable", "Disable", "Default"]);
-export type EnableState = z.infer<typeof EnableStateSchema>;
+export type EnableState = "Enable" | "Disable" | "Default";
 
 /**
- * Read-only state for mapped folders schema
- * Accepts both string ("true"/"false") and boolean values
- * @internal
+ * Read-only state for mapped folders
  */
-export const ReadOnlyStateSchema = z.union([
-  z.enum(["true", "false"]),
-  z.boolean(),
-]).transform((val) => {
-  // Normalize to string for consistency
-  if (typeof val === "boolean") {
-    return val ? "true" as const : "false" as const;
-  }
-  return val;
-});
 export type ReadOnlyState = "true" | "false";
 
 /**
- * Mapped folder configuration schema
- * @internal
+ * Mapped folder configuration
  */
-export const MappedFolderSchema = z.object({
+export type MappedFolder = {
   /** Host folder path */
-  HostFolder: z.string(),
+  HostFolder: string;
   /** Sandbox folder path (optional) */
-  SandboxFolder: z.string().optional(),
+  SandboxFolder?: string;
   /** Read-only flag */
-  ReadOnly: ReadOnlyStateSchema.optional(),
-});
-export type MappedFolder = z.infer<typeof MappedFolderSchema>;
+  ReadOnly?: ReadOnlyState;
+};
 
 /**
- * Logon command configuration schema
- * @internal
+ * Logon command configuration
  */
-export const LogonCommandSchema = z.object({
+export type LogonCommand = {
   /** Command to execute */
-  Command: z.string(),
-});
-export type LogonCommand = z.infer<typeof LogonCommandSchema>;
+  Command: string;
+};
 
 /**
- * Windows Sandbox Configuration schema
- * @internal
+ * Windows Sandbox Configuration
  */
-export const WsbConfigurationSchema = z.object({
+export type WsbConfiguration = {
   /** Enable or disable GPU virtualization */
-  VGpu: EnableStateSchema.optional(),
+  VGpu?: EnableState;
   /** Enable or disable networking */
-  Networking: EnableStateSchema.optional(),
+  Networking?: EnableState;
   /** Mapped folders between host and sandbox */
-  MappedFolders: z.object({
-    MappedFolder: z.union([
-      MappedFolderSchema,
-      z.array(MappedFolderSchema),
-    ]),
-  }).optional(),
+  MappedFolders?: {
+    MappedFolder: MappedFolder | MappedFolder[];
+  };
   /** Logon command to execute on sandbox startup */
-  LogonCommand: LogonCommandSchema.optional(),
+  LogonCommand?: LogonCommand;
   /** Enable or disable audio input */
-  AudioInput: EnableStateSchema.optional(),
+  AudioInput?: EnableState;
   /** Enable or disable video input */
-  VideoInput: EnableStateSchema.optional(),
+  VideoInput?: EnableState;
   /** Enable or disable protected client mode */
-  ProtectedClient: EnableStateSchema.optional(),
+  ProtectedClient?: EnableState;
   /** Enable or disable printer redirection */
-  PrinterRedirection: EnableStateSchema.optional(),
+  PrinterRedirection?: EnableState;
   /** Enable or disable clipboard redirection */
-  ClipboardRedirection: EnableStateSchema.optional(),
+  ClipboardRedirection?: EnableState;
   /** Memory allocation in MB */
-  MemoryInMB: z.number().int().positive().optional(),
-});
-export type WsbConfiguration = z.infer<typeof WsbConfigurationSchema>;
+  MemoryInMB?: number;
+};
 
 /**
- * Root configuration structure schema
+ * Root configuration structure
  */
-export const ConfigurationSchema = z.object({
-  Configuration: WsbConfigurationSchema,
-});
-export type Configuration = z.infer<typeof ConfigurationSchema>;
+export type Configuration = {
+  Configuration: WsbConfiguration;
+};

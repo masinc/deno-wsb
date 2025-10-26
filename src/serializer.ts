@@ -3,7 +3,8 @@
  */
 
 import { XMLBuilder } from "fast-xml-parser";
-import { ConfigurationSchema, type Configuration } from "./types.ts";
+import { ConfigurationSchema } from "./_schemas.ts";
+import type { Configuration } from "./types.ts";
 
 /**
  * Serialize Configuration object to WSB XML string
